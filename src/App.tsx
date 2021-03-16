@@ -9,18 +9,20 @@ const App:React.FC = () => {
   const [message,setMessage] = useState<string>('')
   const [input,setInput]     = useState<string>('')
   const [loading,setLoading] = useState<boolean>(false)
+  const [id,setId]           = useState<string>('')
+  const [cityId,setCityId]   = useState<string>('')
 
   const Click = useCallback(()=>{
     if(input !== '')
     {
       setLoading(true)
-      appRuntime.send('ChannelDeExemplo',{nome:input})
+      appRuntime.send('BuscarCity',{name:input,state:id,persons:[1,4]})
     }
-  },[input])
+  },[input,id,cityId])
 
   useEffect(()=>{
-    appRuntime.subscribe('ChannelDeExemplo',(event,msg)=>{
-      setMessage(msg)
+    appRuntime.subscribe('BuscarCity',(event,msg)=>{
+      console.log(JSON.parse(msg))
       setLoading(false)
     })
   },[])
@@ -32,9 +34,19 @@ const App:React.FC = () => {
         <h2>
           Bem Vindo ao Reactron
         </h2>
-        <div>
-          <label>Escreva seu nome :</label>
-          <input style={{margin:10}} onChange={(event:any)=>setInput(event.target.value)}></input>
+        <div style={{display:'flex',flexDirection:'column'}}>
+          <div style={{display:'flex',flexDirection:'row',justifyContent:"flex-start",alignItems:'center'}}>
+            <label >Nome :</label>
+            <input  style={{margin:10}} onChange={(event:any)=>setInput(event.target.value)}></input>
+          </div>
+          <div style={{display:'flex',flexDirection:'row',justifyContent:"flex-start",alignItems:'center'}}>
+            <label >Idade :</label>
+            <input  style={{margin:10}} onChange={(event:any)=>setId(event.target.value)}></input>
+          </div>
+          <div style={{display:'flex',flexDirection:'row',justifyContent:"flex-start",alignItems:'center'}}>
+            <label >CityId :</label>
+            <input  style={{margin:10}} onChange={(event:any)=>setCityId(event.target.value)}></input>
+          </div>
         </div>
         <Button variant="contained" color="primary" style={{margin:10}} onClick={Click}>Salvar no Backend</Button>
         {(message !== '' && !loading) &&
